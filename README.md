@@ -4,9 +4,8 @@ Automated threat detection system using a honeypot, AWS Bedrock for AI analysis,
 
 ## Architecture
 
-```
-Honeypot → S3 → Lambda → Bedrock (Claude) → Pinecone + DynamoDB
-```
+![Threat Detection Architecture](Cowrie.jpg)
+
 
 1. **Honeypot (Cowrie)** captures attack data
 2. **S3 uploads** trigger Lambda processing
