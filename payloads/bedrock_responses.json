@@ -1,0 +1,9 @@
+{
+  "standard_response": "Score: 75\nThreat: SSH Brute Force Attack\nExplanation: Multiple login attempts with different passwords from the same IP address.",
+  
+  "high_severity_response": "Score: 90\nThreat: Malicious Command Execution\nExplanation: Attacker logged in successfully and executed commands to download and run malware, then attempted to cover tracks by deleting logs.",
+  
+  "low_severity_response": "Score: 30\nThreat: Reconnaissance Activity\nExplanation: Basic directory listing and system information commands without any malicious actions.",
+  
+  "partial_response": "Score: 65\nExplanation: Suspicious activity detected but unable to classify specific threat type."
+}

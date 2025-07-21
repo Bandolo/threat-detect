@@ -1,0 +1,94 @@
+service: threat-detect-bedrock
+
+frameworkVersion: "3"
+
+plugins:
+  - serverless-python-requirements
+
+custom:
+  pythonRequirements:
+    dockerizePip: true
+
+provider:
+  name: aws
+  runtime: python3.11
+  region: us-east-1
+  environment:
+    BEDROCK_MODEL_ID: ${env:BEDROCK_MODEL_ID, "amazon.titan-text-express-v1"}
+    MAX_TOKEN_COUNT: ${env:MAX_TOKEN_COUNT, "512"}
+    THREATS_TABLE: ThreatsTable
+    LOG_BUCKET: creditcardd
+    PINECONE_SECRET_ARN: arn:aws:secretsmanager:us-east-1:609738416112:secret:pinecone/credentials
+    PINECONE_INDEX: docqa-index
+    SNS_TOPIC_ARN: arn:aws:sns:us-east-1:609738416112:threat-alerts
+    SEVERITY_THRESHOLD: "75"
+  iam:
+    role:
+      statements:
+        # Secrets Manager
+        - Effect: Allow
+          Action:
+            - secretsmanager:GetSecretValue
+            - secretsmanager:DescribeSecret
+          Resource: 
+            - arn:aws:secretsmanager:us-east-1:609738416112:secret:pinecone/credentials*
+        # Bedrock permissions
+        - Effect: Allow
+          Action:
+            - bedrock:InvokeModel
+          Resource: "*"
+        # s3
+        - Effect: Allow
+          Action:
+            - s3:GetObject
+          Resource:
+            - arn:aws:s3:::creditcardd/*
+        - Effect: Allow
+          Action:
+            - s3:ListBucket
+          Resource:
+            - arn:aws:s3:::creditcardd
+          # Dynamodb
+        - Effect: Allow
+          Action:
+            - dynamodb:PutItem
+          Resource:
+          - Fn::GetAtt: [ThreatsTable, Arn]
+        # SNS permissions
+        - Effect: Allow
+          Action:
+            - sns:Publish
+          Resource: arn:aws:sns:us-east-1:609738416112:threat-alerts
+        # CloudWatch metrics permissions
+        - Effect: Allow
+          Action:
+            - cloudwatch:PutMetricData
+          Resource: "*"
+  
+
+functions:
+  threatAnalyzer:
+    handler: pinecone_handler.handler.handler
+    events:
+      - s3:
+          bucket: creditcardd
+          event: s3:ObjectCreated:*
+          existing: true
+
+resources:
+  Resources:
+    ThreatsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ThreatsTable
+        AttributeDefinitions:
+          - AttributeName: event_id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: event_id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+        SSESpecification:
+          SSEEnabled: true
+
+
