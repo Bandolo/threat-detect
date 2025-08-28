@@ -1,52 +1,35 @@
-# Tests for Threat Detection System
+# Test Suite
 
-This directory contains tests for the core functionality of the threat detection system.
+Comprehensive test suite for the Threat Detection System.
 
 ## Running Tests
 
-To run all tests with pytest:
-
+### All Tests
 ```bash
-cd /path/to/threat-detect
-pytest
+cd tests
+./test_all.sh
 ```
 
-To run a specific test file:
-
+### Individual Python Tests
 ```bash
-pytest tests/test_parse_response.py
-```
+# Unit tests
+pytest test_bedrock_stub.py -v
+pytest test_parse_response.py -v
 
-To run a specific test function:
-
-```bash
-pytest tests/test_parse_response.py::test_parse_complete_response
+# Integration tests  
+python test_pipeline.py
+python test_embedding.py
 ```
 
 ## Test Coverage
 
-The tests cover the following components:
+- **Unit Tests**: Core functionality (bedrock, parsing, embedding)
+- **Integration Tests**: End-to-end pipeline testing
+- **System Tests**: AWS services integration
+- **Performance Tests**: Metrics and monitoring
 
-### 1. Response Parser (`test_parse_response.py`)
-- `parse_raw`: Tests parsing of raw AI responses into structured data
-- Tests complete responses with all fields
-- Tests partial responses with missing fields
-- Tests high severity threat detection
-- Tests empty response handling
+## Prerequisites
 
-### 2. Bedrock Handler (`test_bedrock_stub.py`)
-- `estimate_tokens`: Tests token estimation for cost calculation
-- `estimate_cost`: Tests cost calculation based on token usage
-
-## Adding New Tests
-
-When adding new functionality, create corresponding tests following these guidelines:
-
-1. Use descriptive test method names that explain what's being tested
-2. Mock external dependencies to isolate the unit being tested
-3. Test both success cases and error handling
-4. Include assertions that verify the expected behavior
-
-## Continuous Integration
-
-These tests can be integrated into a CI/CD pipeline to ensure code quality before deployment.
+- AWS CLI configured
+- Python virtual environment activated
+- Required AWS permissions for S3, Lambda, DynamoDB, SNS
