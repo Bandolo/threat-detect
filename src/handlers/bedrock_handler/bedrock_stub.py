@@ -3,7 +3,7 @@ import json
 import boto3
 import time
 from botocore.exceptions import ClientError
-from prototype.parse_response import parse_raw
+from src.utils.prototype.parse_response import parse_raw
 
 MODEL_ID = os.getenv("BEDROCK_MODEL_ID", "anthropic.claude-3-haiku-20240307-v1:0")
 MAX_TOKENS = int(os.getenv("MAX_TOKEN_COUNT", "1000"))

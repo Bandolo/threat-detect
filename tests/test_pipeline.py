@@ -1,12 +1,12 @@
 import json
 import os
-from bedrock_handler.bedrock_stub import invoke_bedrock, invoke_embedding
-from prototype.parse_response import parse_raw
+from src.handlers.bedrock_handler.bedrock_stub import invoke_bedrock, invoke_embedding
+from src.utils.prototype.parse_response import parse_raw
 
 print("Testing the full threat detection pipeline...")
 
 # Load sample log
-with open('payloads/sample_log.json', 'r') as f:
+with open('scripts/payloads/sample_log.json', 'r') as f:
     log = json.load(f)
 
 print("\n1. Sample log data:")

@@ -2,7 +2,7 @@ import os
 import json
 import boto3
 from datetime import datetime
-from bedrock_handler.bedrock_stub import invoke_bedrock, invoke_embedding
+from src.handlers.bedrock_handler.bedrock_stub import invoke_bedrock, invoke_embedding
 
 def get_pinecone_client():
     """Get Pinecone client with API key from Secrets Manager"""
@@ -84,7 +84,7 @@ def handler(event, context):
             vector = embedding_result.get("embedding", [])
             
             # Parse the analysis
-            from prototype.parse_response import parse_raw
+            from src.utils.prototype.parse_response import parse_raw
             parsed = parse_raw(raw_analysis)
             
             # Create item for DynamoDB

@@ -8,7 +8,7 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # Import the functions to test
-from bedrock_handler.bedrock_stub import estimate_tokens, estimate_cost
+from src.handlers.bedrock_handler.bedrock_stub import estimate_tokens, estimate_cost
 
 def test_estimate_tokens_empty():
     """Test token estimation with empty text"""

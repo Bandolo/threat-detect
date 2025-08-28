@@ -8,10 +8,10 @@ import json
 # Add project root to path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from prototype.parse_response import parse_raw
+from src.utils.prototype.parse_response import parse_raw
 
 # Load test payloads
-with open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'payloads', 'bedrock_responses.json')) as f:
+with open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'scripts', 'payloads', 'bedrock_responses.json')) as f:
     responses = json.load(f)
 
 def test_parse_complete_response():
