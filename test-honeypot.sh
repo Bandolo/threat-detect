@@ -42,5 +42,5 @@ aws s3 ls s3://creditcardd/cowrie-logs/ | grep $(date +%Y-%m-%d)
 echo -e "\n9. Checking upload logs..."
 cat /var/log/upload_to_s3.log 2>/dev/null || echo "No upload logs yet (cron hasn't run)"
 
-echo -e "\n✅ Test complete!"
+echo -e "\nSuccessful: Test complete!"
 echo "If all tests passed, your honeypot is working correctly!"

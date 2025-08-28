@@ -81,6 +81,11 @@ PYEOF
 chmod +x /home/ubuntu/upload_to_s3.py
 
 # -------- 8. Set up cron job with sudo for file access --------
+# Create log file with proper permissions first
+touch /var/log/upload_to_s3.log
+chown ubuntu:ubuntu /var/log/upload_to_s3.log
+chmod 664 /var/log/upload_to_s3.log
+
 # Set up cron job for ubuntu user (user data runs as root, so we need to specify user)
 sudo -u ubuntu bash -c '(crontab -l 2>/dev/null; echo "*/5 * * * * sudo /usr/bin/python3 /home/ubuntu/upload_to_s3.py >> /var/log/upload_to_s3.log 2>&1") | crontab -'
 
@@ -88,8 +93,8 @@ sudo -u ubuntu bash -c '(crontab -l 2>/dev/null; echo "*/5 * * * * sudo /usr/bin
 echo "ubuntu ALL=(ALL) NOPASSWD: /usr/bin/python3 /home/ubuntu/upload_to_s3.py" >> /etc/sudoers.d/cowrie-upload
 chmod 440 /etc/sudoers.d/cowrie-upload
 
-echo "✅ Cowrie honeypot setup complete!"
-echo "✅ SSH admin access: port 22 (normal SSH)"
-echo "✅ Honeypot listening: port 2222"
-echo "✅ Logs uploading to S3 every 5 minutes"
-echo "✅ Test honeypot: ssh -p 2222 root@instance-ip"
+echo "Successful: Cowrie honeypot setup complete!"
+echo "Successful: SSH admin access: port 22 (normal SSH)"
+echo "Successful: Honeypot listening: port 2222"
+echo "Successful: Logs uploading to S3 every 5 minutes"
+echo "Successful: Test honeypot: ssh -p 2222 root@instance-ip"

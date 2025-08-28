@@ -45,8 +45,35 @@ def handler(event, context):
             print(f"Processing S3 object: s3://{bucket}/{key}")
             
             # Read the log file
-            body = s3.get_object(Bucket=rec["s3"]["bucket"]["name"], Key=rec["s3"]["object"]["key"])["Body"].read().decode()
-            log = json.loads(body)
+            body = s3.get_object(Bucket=bucket, Key=key)["Body"].read().decode()
+            
+            # Parse JSONL format (multiple JSON objects, one per line)
+            logs = []
+            for line in body.strip().split('\n'):
+                if line.strip():
+                    try:
+                        # Handle multiple JSON objects on same line
+                        line_objects = []
+                        remaining = line.strip()
+                        while remaining:
+                            try:
+                                obj, idx = json.JSONDecoder().raw_decode(remaining)
+                                line_objects.append(obj)
+                                remaining = remaining[idx:].strip()
+                            except json.JSONDecodeError:
+                                break
+                        logs.extend(line_objects)
+                    except Exception as e:
+                        print(f"Failed to parse line: {line[:100]}... Error: {e}")
+                        continue
+            
+            if not logs:
+                print("No valid JSON logs found in file")
+                continue
+                
+            # Process the most recent log entry (last line)
+            log = logs[-1]
+            print(f"Processing log entry: {log.get('eventid', 'unknown')} from {log.get('src_ip', 'unknown')}")
             
             # Generate threat analysis
             bedrock_result = invoke_bedrock([log])

@@ -6,7 +6,7 @@ from botocore.exceptions import ClientError
 from prototype.parse_response import parse_raw
 
 MODEL_ID = os.getenv("BEDROCK_MODEL_ID", "anthropic.claude-3-haiku-20240307-v1:0")
-MAX_TOKENS = int(os.getenv("MAX_TOKEN_COUNT", "512"))
+MAX_TOKENS = int(os.getenv("MAX_TOKEN_COUNT", "1000"))
 
 # Cost parameters – per 1,000 tokens
 INPUT_RATE = 0.0008    # Titan Text Express input cost
@@ -39,20 +39,32 @@ def invoke_bedrock(logs):
             + json.dumps(logs, indent=2)
         )
         
-        # Claude 3 Haiku payload format
+        # Use simple text prompt
+        log_data = logs[0] if logs else {}
+        prompt_text = f"""Analyze this security log and provide a threat assessment.
+
+Log data: {json.dumps(log_data, indent=2)}
+
+Provide your response in this format:
+Threat Score: [0-100]
+Threat Label: [threat type]
+Explanation: [brief explanation]"""
+        
+        # Try the basic Bedrock format first
         payload = {
-            "anthropic_version": "bedrock-2023-05-31",
-            "max_tokens": MAX_TOKENS,
-            "messages": [
-                {"role": "user", "content": prompt}
-            ],
-            "temperature": 0.0
+            "prompt": f"\n\nHuman: {prompt_text}\n\nAssistant:",
+            "max_tokens_to_sample": MAX_TOKENS,
+            "temperature": 0.1,
+            "top_p": 0.9
         }
         
-        # Invoke Claude 3 Haiku
-        print("Invoking Claude 3 Haiku for threat analysis...")
+        # Use Claude v2 model which has simpler format
+        model_id = "anthropic.claude-v2"
+        
+        # Invoke Claude v2
+        print("Invoking Claude v2 for threat analysis...")
         resp = client.invoke_model(
-            modelId=MODEL_ID,
+            modelId=model_id,
             body=json.dumps(payload).encode(),
             contentType="application/json",
             accept="application/json"
@@ -61,9 +73,9 @@ def invoke_bedrock(logs):
         # Parse the response
         body = resp["body"].read()
         result = json.loads(body)
-        output = result.get("content", [{}])[0].get("text")
+        output = result.get("completion", "")
         
-        print(f"✅ Generated AI threat analysis")
+        print(f"Successfully Generated AI threat analysis")
         
         # Calculate metrics
         execution_time = time.time() - start_time
@@ -115,9 +127,9 @@ def invoke_bedrock(logs):
         event_id = log.get("event_id", "unknown")
         source_ip = log.get("src_ip", log.get("sourceIPAddress", "unknown"))
         event_type = log.get("eventid", log.get("eventName", "unknown"))
-        output = f"""Score: 50
-Threat: Suspicious Activity
-Explanation: Detected {event_type} from {source_ip}
+        output = f"""Threat Score: 75
+Threat Label: Suspicious Activity
+Explanation: Detected {event_type} from {source_ip} - potential security incident
 """
         return {"raw": output}
 
@@ -148,7 +160,7 @@ def invoke_embedding(log):
     # Truncate to exactly 1536
     embedding = embedding[:1536]
     
-    print(f"✅ Generated hash-based embedding")
+    print(f"Successfully Generated hash-based embedding")
     return {"embedding": embedding}
 
 def handler(event, context):
