@@ -68,7 +68,7 @@ provider:
 
 functions:
   threatAnalyzer:
-    handler: pinecone_handler.handler.handler
+    handler: src/handlers/pinecone_handler.handler.handler
     events:
       - s3:
           bucket: creditcardd

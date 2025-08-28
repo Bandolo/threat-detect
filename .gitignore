@@ -1,5 +1,11 @@
-# Ignore PEM files (SSH keys)
+# Security & Credentials
 *.pem
+*.key
+*.credentials
+.env
+.env.*
+.aws/
+aws-credentials.json
 
 # Python
 __pycache__/
@@ -29,40 +35,35 @@ var/
 .coverage
 htmlcov/
 
-# Serverless
+# AWS & Serverless
 .serverless/
 node_modules/
 package-lock.json
+*.zip
+function.zip
 
-# Environment variables
-.env
-.env.*
-
-# Test files
+# Test Files
 test_*.json
 response.json
 sample-log.json
 unique_test.json
 
-# IDE
+# Development Tools
 .vscode/
 .idea/
 *.sublime-project
 *.sublime-workspace
 
-# OS specific
+# System Files
 .DS_Store
 Thumbs.db
-
-# Logs
 *.log
 logs/
-
-# Temporary files
 *.tmp
 *.bak
 *.swp
 *~
 
-# YouTube tutorials
+# Documentation
+docs/
 youtube_tutorials/
